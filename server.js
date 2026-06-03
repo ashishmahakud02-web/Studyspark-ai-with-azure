@@ -10,7 +10,8 @@ app.use(cors());
 app.use(express.json());
 
 const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1"
 });
 
 function buildPrompt(mode, input) {
@@ -42,12 +43,12 @@ app.post("/ask", async (req, res) => {
     const { mode, input } = req.body;
     const prompt = buildPrompt(mode, input);
 
-    const response = await client.responses.create({
-      model: "gpt-4.1",
-      input: [
+    const response = await client.chat.completions.create({
+      model: "openrouter/auto",
+      messages: [
         {
           role: "system",
-          content: "You are an intelligent AI study assistant. Give clear, helpful, student-friendly answers. Keep summaries concise and explanations easy to understand."
+          content: "You are an intelligent AI study assistant. Give clear, helpful, student-friendly answers."
         },
         {
           role: "user",
@@ -56,11 +57,13 @@ app.post("/ask", async (req, res) => {
       ]
     });
 
-    res.json({ result: response.output_text });
+    res.json({
+      result: response.choices[0].message.content
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      result: "Something went wrong while generating the AI response."
+      result: "AI response generate nahi hua. API key ya server issue ho sakta hai."
     });
   }
 });
