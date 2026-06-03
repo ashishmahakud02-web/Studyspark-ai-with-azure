@@ -10,8 +10,8 @@ app.use(cors());
 app.use(express.json());
 
 const client = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1"
+  apiKey: process.env.GEMINI_API_KEY,
+  baseURL: "https://generativelanguage.googleapis.com/v1beta/"
 });
 
 function buildPrompt(mode, input) {
@@ -44,7 +44,7 @@ app.post("/ask", async (req, res) => {
     const prompt = buildPrompt(mode, input);
 
     const response = await client.chat.completions.create({
-      model: "openrouter/auto",
+      model: "gemini-1.5-flash",
       messages: [
         {
           role: "system",
