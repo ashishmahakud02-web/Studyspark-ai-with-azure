@@ -73,7 +73,7 @@ async function generateAIResponse() {
   statusText.textContent = "Generating response...";
 
   try {
-    const response = await fetch("http://localhost:3000/ask", {
+    const response = await fetch("https://studyspark-ai-with-azure.onrender.com/ask", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
