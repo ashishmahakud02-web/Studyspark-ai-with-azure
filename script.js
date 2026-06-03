@@ -1,6 +1,10 @@
 const notes = document.getElementById("notes");
-const summarizeBtn = document.getElementById("summarizeBtn");
+const generateBtn = document.getElementById("generateBtn");
+const copyBtn = document.getElementById("copyBtn");
+const clearBtn = document.getElementById("clearBtn");
 const summary = document.getElementById("summary");
+const statusText = document.getElementById("status");
+const modeButtons = document.querySelectorAll(".mode-btn");
 
 const timerDisplay = document.getElementById("timer");
 const startBtn = document.getElementById("startBtn");
@@ -10,9 +14,19 @@ const resetBtn = document.getElementById("resetBtn");
 const sessions = document.getElementById("sessions");
 const completeBtn = document.getElementById("completeBtn");
 
+let selectedMode = "summarize";
 let totalSeconds = 25 * 60;
 let timerInterval = null;
 let completedSessions = 0;
+
+modeButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    modeButtons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    selectedMode = btn.dataset.mode;
+    statusText.textContent = `Mode selected: ${selectedMode}`;
+  });
+});
 
 function updateTimer() {
   const minutes = Math.floor(totalSeconds / 60);
@@ -23,7 +37,6 @@ function updateTimer() {
 
 function startTimer() {
   if (timerInterval) return;
-
   timerInterval = setInterval(() => {
     if (totalSeconds > 0) {
       totalSeconds--;
@@ -48,27 +61,53 @@ function resetTimer() {
   updateTimer();
 }
 
-function summarizeText(text) {
-  const cleanText = text.trim();
+async function generateAIResponse() {
+  const input = notes.value.trim();
 
-  if (cleanText.length === 0) {
-    return "Please enter your study notes first.";
+  if (!input) {
+    summary.textContent = "Please enter notes or a question first.";
+    statusText.textContent = "Input required.";
+    return;
   }
 
-  const sentences = cleanText
-    .split(/[.!?]/)
-    .map(sentence => sentence.trim())
-    .filter(sentence => sentence.length > 0);
+  statusText.textContent = "Generating response...";
 
-  if (sentences.length <= 2) {
-    return cleanText;
+  try {
+    const response = await fetch("http://localhost:3000/ask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        mode: selectedMode,
+        input
+      })
+    });
+
+    const data = await response.json();
+    summary.textContent = data.result || "No response received.";
+    statusText.textContent = "Done.";
+  } catch (error) {
+    summary.textContent = "Error: Unable to connect to AI server.";
+    statusText.textContent = "Server error.";
   }
-
-  return sentences.slice(0, 2).join(". ") + ".";
 }
 
-summarizeBtn.addEventListener("click", () => {
-  summary.textContent = summarizeText(notes.value);
+generateBtn.addEventListener("click", generateAIResponse);
+
+copyBtn.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(summary.textContent);
+    statusText.textContent = "Copied successfully.";
+  } catch {
+    statusText.textContent = "Copy failed.";
+  }
+});
+
+clearBtn.addEventListener("click", () => {
+  notes.value = "";
+  summary.textContent = "Your AI response will appear here.";
+  statusText.textContent = "Cleared.";
 });
 
 startBtn.addEventListener("click", startTimer);
