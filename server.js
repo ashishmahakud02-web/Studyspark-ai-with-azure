@@ -14,6 +14,10 @@ const client = new OpenAI({
   baseURL: "https://generativelanguage.googleapis.com/v1beta/"
 });
 
+app.get("/", (req, res) => {
+  res.send("Study Spark backend is running");
+});
+
 function buildPrompt(mode, input) {
   if (mode === "summarize") {
     return `Summarize this study content in 4-6 clear and useful lines:
@@ -68,6 +72,6 @@ app.post("/ask", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Server running");
 });
