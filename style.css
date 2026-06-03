@@ -6,14 +6,14 @@
 
 body {
   font-family: Arial, sans-serif;
-  background: #0f172a;
+  background: linear-gradient(135deg, #0f172a, #111827);
   color: #f8fafc;
   min-height: 100vh;
   padding: 20px;
 }
 
 .app {
-  max-width: 900px;
+  max-width: 950px;
   margin: 0 auto;
 }
 
@@ -23,19 +23,22 @@ body {
 }
 
 .hero h1 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   margin-bottom: 8px;
   color: #38bdf8;
 }
 
 .hero p {
   color: #cbd5e1;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
 }
 
 .card {
   background: #1e293b;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 18px;
+  padding: 22px;
   margin-bottom: 20px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.25);
 }
@@ -45,9 +48,18 @@ body {
   color: #e2e8f0;
 }
 
+.mode-row,
+.action-row,
+.btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
 textarea {
   width: 100%;
-  min-height: 180px;
+  min-height: 220px;
   border: none;
   border-radius: 12px;
   padding: 14px;
@@ -55,6 +67,9 @@ textarea {
   resize: vertical;
   margin-bottom: 14px;
   outline: none;
+  background: #f8fafc;
+  color: #0f172a;
+  line-height: 1.6;
 }
 
 button {
@@ -72,13 +87,29 @@ button:hover {
   background: #0ea5e9;
 }
 
+.mode-btn {
+  background: #334155;
+  color: #f8fafc;
+}
+
+.mode-btn.active {
+  background: #22c55e;
+  color: #052e16;
+}
+
 #summary {
   background: #334155;
   padding: 16px;
   border-radius: 12px;
-  min-height: 100px;
-  line-height: 1.6;
+  min-height: 150px;
+  line-height: 1.7;
   color: #f8fafc;
+  white-space: pre-wrap;
+}
+
+.status-text {
+  color: #facc15;
+  font-size: 14px;
 }
 
 .grid {
@@ -99,12 +130,6 @@ button:hover {
   text-align: center;
 }
 
-.btn-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
 .sessions-text {
   margin-bottom: 16px;
   font-size: 18px;
@@ -116,10 +141,10 @@ button:hover {
   }
 
   .hero h1 {
-    font-size: 1.6rem;
+    font-size: 1.7rem;
   }
 
   #timer {
-    font-size: 2.4rem;
+    font-size: 2.3rem;
   }
 }
