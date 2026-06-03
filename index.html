@@ -3,27 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Study Assistant</title>
+  <title>Study Spark AI</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="app">
     <header class="hero">
-      <h1>AI-Powered Study Assistant</h1>
-      <p>Summarize notes, stay focused, and track your study progress.</p>
+      <h1>Study Spark AI</h1>
+      <p>Your smart AI study partner for summaries, explanations, questions, and focused learning.</p>
     </header>
 
     <section class="card">
-      <h2>Study Notes</h2>
-      <textarea id="notes" placeholder="Paste your study notes here..."></textarea>
-      <button id="summarizeBtn">Summarize</button>
+      <h2>AI Assistant</h2>
+
+      <div class="mode-row">
+        <button class="mode-btn active" data-mode="summarize">Summarize</button>
+        <button class="mode-btn" data-mode="explain">Explain</button>
+        <button class="mode-btn" data-mode="ask">Ask Anything</button>
+        <button class="mode-btn" data-mode="keypoints">Key Points</button>
+      </div>
+
+      <textarea id="notes" placeholder="Paste notes or ask any topic here..."></textarea>
+
+      <div class="action-row">
+        <button id="generateBtn">Generate</button>
+        <button id="copyBtn">Copy</button>
+        <button id="clearBtn">Clear</button>
+      </div>
+
+      <p id="status" class="status-text">Ready.</p>
     </section>
 
     <section class="card">
-      <h2>Summary</h2>
-      <div id="summary">
-        Your summary will appear here.
-      </div>
+      <h2>AI Output</h2>
+      <div id="summary">Your AI response will appear here.</div>
     </section>
 
     <section class="grid">
