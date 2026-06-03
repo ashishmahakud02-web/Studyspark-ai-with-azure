@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <h1>AI-Powered Study Assistant</h1>
+      <p>Summarize notes, stay focused, and track your study progress.</p>
+    </header>
+
+    <section class="card">
+      <h2>Study Notes</h2>
+      <textarea id="notes" placeholder="Paste your study notes here..."></textarea>
+      <button id="summarizeBtn">Summarize</button>
+    </section>
+
+    <section class="card">
+      <h2>Summary</h2>
+      <div id="summary">
+        Your summary will appear here.
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card small-card">
+        <h2>Study Timer</h2>
+        <div id="timer">25:00</div>
+        <div class="btn-row">
+          <button id="startBtn">Start</button>
+          <button id="pauseBtn">Pause</button>
+          <button id="resetBtn">Reset</button>
+        </div>
+      </div>
+
+      <div class="card small-card">
+        <h2>Progress Tracker</h2>
+        <p class="sessions-text">Completed Sessions: <span id="sessions">0</span></p>
+        <button id="completeBtn">Mark Session Complete</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
