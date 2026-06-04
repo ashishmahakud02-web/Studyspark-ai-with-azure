@@ -64,13 +64,20 @@ app.post("/ask", async (req, res) => {
     res.json({
       result: response.choices[0].message.content
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      result: "AI response generate nahi hua. API key ya server issue ho sakta hai."
-    });
-  }
+    } catch (error) {
+  console.error("FULL ERROR:", error);
+  console.error("MESSAGE:", error?.message);
+  console.error("STATUS:", error?.status);
+  console.error("RESPONSE:", error?.response?.data);
+
+  res.status(500).json({
+    result: "AI response failed."
+  });
+}
+ 
 });
+console.log("API key found:", !!
+            process.env.GEMINI_API_KEY);
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("Server running");
