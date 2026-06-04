@@ -9,11 +9,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const client = new OpenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  baseURL: "https://generativelanguage.googleapis.com/v1beta/"
-});
+import OpenAI from "openai";
 
+const openai = new OpenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+});
 app.get("/", (req, res) => {
   res.send("Study Spark backend is running");
 });
@@ -47,20 +48,12 @@ app.post("/ask", async (req, res) => {
     const { mode, input } = req.body;
     const prompt = buildPrompt(mode, input);
 
-    const response = await client.chat.completions.create({
-      model: "gemini-1.5-flash",
-      messages: [
-        {
-          role: "system",
-          content: "You are an intelligent AI study assistant. Give clear, helpful, student-friendly answers."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ]
-    });
-
+    const response = await openai.chat.completions.create({
+  model: "gemini-3.5-flash",
+  messages: [
+    { role: "user", content: userPrompt }
+  ]
+});
     res.json({
       result: response.choices[0].message.content
     });
