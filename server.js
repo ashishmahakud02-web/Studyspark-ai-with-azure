@@ -1,8 +1,12 @@
+import multer from "multer";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import OpenAI from "openai";
-
+const upload = multer({ storage: multer.memoryStorage() });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 dotenv.config();
 
 const app = express();
@@ -42,7 +46,7 @@ ${input}`;
 ${input}`;
 }
 
-app.post("/ask", async (req, res) => {
+app.post("/ask", upload.single("file"), async (req, res) => {
   try {
     const { mode, input } = req.body;
     const prompt = buildPrompt(mode, input);
