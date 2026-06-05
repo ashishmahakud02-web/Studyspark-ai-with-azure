@@ -66,8 +66,44 @@ function resetTimer() {
   totalSeconds = 25 * 60;
   updateTimer();
 }
-
 async function generateAIResponse() {
+  const userText = notes.value.trim();
+  const selectedFile = fileInput?.files?.[0];
+
+  if (!userText && !selectedFile) {
+    statusText.textContent = "Pehle text likho ya file choose karo";
+    return;
+  }
+
+  try {
+    statusText.textContent = "Generating...";
+
+    const formData = new FormData();
+    formData.append("prompt", userText);
+    formData.append("mode", selectedMode);
+
+    if (selectedFile) {
+      formData.append("file", selectedFile);
+    }
+
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Something went wrong");
+    }
+
+    summary.textContent = data.result || "No response received";
+    statusText.textContent = "Done";
+  } catch (error) {
+    statusText.textContent = error.message || "Error aa gaya";
+  }
+}
+
   const input = notes.value.trim();
 
   if (!input) {
