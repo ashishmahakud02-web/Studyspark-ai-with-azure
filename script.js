@@ -87,16 +87,17 @@ async function generateAIResponse() {
       formData.append("file", selectedFile);
     }
 
-    const response = await fetch("https://studyspark-ai-with-azure.onrender.com./ask", {
+    const response = await fetch("https://studyspark-ai-with-azure.onrender.com/ask", {
       method: "POST",
       body: formData
     });
+
     const contentType = response.headers.get("content-type") || "";
 
-if (!contentType.includes("application/json")) {
-  const text = await response.text();
-  throw new Error("Server JSON ke badle HTML de raha hai");
-}
+    if (!contentType.includes("application/json")) {
+      const text = await response.text();
+      throw new Error(`Server JSON ke badle ye bhej raha hai: ${text}`);
+    }
 
     const data = await response.json();
 
@@ -107,7 +108,7 @@ if (!contentType.includes("application/json")) {
     summary.textContent = data.result || "No response received";
     statusText.textContent = "Done";
   } catch (error) {
-    summary.textContent = "Error: Unable to connect to AI server.";
+    summary.textContent = `Error: ${error.message}`;
     statusText.textContent = error.message || "Server error.";
   }
 }
