@@ -1,22 +1,19 @@
-import multer from "multer";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import OpenAI from "openai";
-const upload = multer({ storage: multer.memoryStorage() });
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+import multer from "multer";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 dotenv.config();
 
 const app = express();
+const upload = multer({ storage: multer.memoryStorage() });
+
 app.use(cors());
 app.use(express.json());
 
-const openai = new OpenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 app.get("/", (req, res) => {
   res.send("Study Spark backend is running");
@@ -48,27 +45,32 @@ ${input}`;
 
 app.post("/ask", upload.single("file"), async (req, res) => {
   try {
-    const { mode, input } = req.body;
-    const prompt = buildPrompt(mode, input);
+    const promptText = req.body.prompt || "";
+    const mode = req.body.mode || "summarize";
+    const file = req.file;
 
-    const response = await openai.chat.completions.create({
-      model: "gemini-3.5-flash",
-      messages: [
-        { role: "user", content: prompt }
-      ]
-    });
+    const finalPrompt = buildPrompt(mode, promptText);
+    const parts = [{ text: finalPrompt }];
 
-    res.json({
-      result: response.choices[0].message.content
-    });
+    if (file) {
+      parts.push({
+        inlineData: {
+          data: file.buffer.toString("base64"),
+          mimeType: file.mimetype
+        }
+      });
+    }
+
+    const result = await model.generateContent(parts);
+    const text = result.response.text();
+
+    res.json({ result: text });
   } catch (error) {
     console.error("FULL ERROR:", error);
     console.error("MESSAGE:", error?.message);
-    console.error("STATUS:", error?.status);
-    console.error("RESPONSE:", error?.response?.data);
 
     res.status(500).json({
-      result: "AI response failed."
+      error: error.message || "AI response failed."
     });
   }
 });
