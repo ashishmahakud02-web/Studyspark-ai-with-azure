@@ -29,6 +29,7 @@ modeButtons.forEach((btn) => {
     statusText.textContent = `Mode selected: ${selectedMode}`;
   });
 });
+
 fileInput?.addEventListener("change", () => {
   const selectedFile = fileInput.files[0];
   fileName.textContent = selectedFile ? selectedFile.name : "No file selected";
@@ -37,8 +38,7 @@ fileInput?.addEventListener("change", () => {
 function updateTimer() {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
-  timerDisplay.textContent =
-    `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  timerDisplay.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
 function startTimer() {
@@ -66,6 +66,7 @@ function resetTimer() {
   totalSeconds = 25 * 60;
   updateTimer();
 }
+
 async function generateAIResponse() {
   const userText = notes.value.trim();
   const selectedFile = fileInput?.files?.[0];
@@ -86,7 +87,7 @@ async function generateAIResponse() {
       formData.append("file", selectedFile);
     }
 
-    const response = await fetch("/api/generate", {
+    const response = await fetch("/ask", {
       method: "POST",
       body: formData
     });
@@ -99,79 +100,14 @@ async function generateAIResponse() {
 
     summary.textContent = data.result || "No response received";
     statusText.textContent = "Done";
-  } catch (error) {
-    statusText.textContent = error.message || "Error aa gaya";
-  }
-}
-
-  const input = notes.value.trim();
-
-  if (!input) {
-    summary.textContent = "Please enter notes or a question first.";
-    statusText.textContent = "Input required.";
-    return;
-  }
-
-  statusText.textContent = "Generating response...";
-
-  try {
-    const response = await fetch("https://studyspark-ai-with-azure.onrender.com/ask", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        mode: selectedMode,
-        input
-      })
-    });
-
-    const data = await response.json();
-    summary.textContent = data.result || "No response received.";
-    statusText.textContent = "Done.";
   } catch (error) {
     summary.textContent = "Error: Unable to connect to AI server.";
-    statusText.textContent = "Server error.";
+    statusText.textContent = error.message || "Server error.";
   }
 }
 
-generateBtn.addEventListener("click", async () => {
-  const userText = notes.value.trim();
-  const selectedFile = fileInput?.files?.[0];
+generateBtn.addEventListener("click", generateAIResponse);
 
-  if (!userText && !selectedFile) {
-    statusText.textContent = "Pehle text likho ya file choose karo";
-    return;
-  }
-
-  try {
-    statusText.textContent = "Generating...";
-
-    const formData = new FormData();
-    formData.append("prompt", userText);
-    formData.append("mode", selectedMode);
-
-    if (selectedFile) {
-      formData.append("file", selectedFile);
-    }
-
-    const response = await fetch("/api/generate", {
-      method: "POST",
-      body: formData
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Something went wrong");
-    }
-
-    summary.textContent = data.result || "No response received";
-    statusText.textContent = "Done";
-  } catch (error) {
-    statusText.textContent = error.message || "Error aa gaya";
-  }
-});
 copyBtn.addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(summary.textContent);
@@ -183,6 +119,8 @@ copyBtn.addEventListener("click", async () => {
 
 clearBtn.addEventListener("click", () => {
   notes.value = "";
+  if (fileInput) fileInput.value = "";
+  if (fileName) fileName.textContent = "No file selected";
   summary.textContent = "Your AI response will appear here.";
   statusText.textContent = "Cleared.";
 });
