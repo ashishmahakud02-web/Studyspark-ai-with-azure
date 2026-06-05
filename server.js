@@ -11,18 +11,14 @@ const PORT = process.env.PORT || 3000;
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 10 * 1024 * 1024
-  }
+  limits: { fileSize: 10 * 1024 * 1024 }
 });
 
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"]
-}));
-
+app.use(cors({ origin: "*", methods: ["GET", "POST"], allowedHeaders: ["Content-Type"] }));
 app.use(express.json());
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 app.get("/", (req, res) => {
   res.send("Study Spark backend is running");
@@ -31,7 +27,8 @@ app.get("/", (req, res) => {
 app.get("/health", (req, res) => {
   res.json({
     ok: true,
-    apiKeyFound: !!process.env.GEMINI_API_KEY
+    apiKeyFound: !!process.env.GEMINI_API_KEY,
+    model: "gemini-2.0-flash"
   });
 });
 
@@ -61,24 +58,13 @@ ${input}`;
 
 app.post("/ask", upload.single("file"), async (req, res) => {
   try {
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(500).json({
-        error: "GEMINI_API_KEY missing in Render environment variables"
-      });
-    }
-
     const promptText = req.body.prompt || "";
     const mode = req.body.mode || "summarize";
     const file = req.file;
 
     if (!promptText && !file) {
-      return res.status(400).json({
-        error: "Prompt ya file bhejo"
-      });
+      return res.status(400).json({ error: "Prompt ya file bhejo" });
     }
-
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const finalPrompt = buildPrompt(mode, promptText || "Explain this file clearly.");
     const parts = [{ text: finalPrompt }];
