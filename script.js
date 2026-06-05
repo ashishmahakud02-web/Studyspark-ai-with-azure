@@ -2,6 +2,8 @@ const notes = document.getElementById("notes");
 const generateBtn = document.getElementById("generateBtn");
 const copyBtn = document.getElementById("copyBtn");
 const clearBtn = document.getElementById("clearBtn");
+const fileInput = document.getElementById("fileInput");
+const fileName = document.getElementById("fileName");
 const summary = document.getElementById("summary");
 const statusText = document.getElementById("status");
 const modeButtons = document.querySelectorAll(".mode-btn");
@@ -26,6 +28,10 @@ modeButtons.forEach((btn) => {
     selectedMode = btn.dataset.mode;
     statusText.textContent = `Mode selected: ${selectedMode}`;
   });
+});
+fileInput?.addEventListener("change", () => {
+  const selectedFile = fileInput.files[0];
+  fileName.textContent = selectedFile ? selectedFile.name : "No file selected";
 });
 
 function updateTimer() {
