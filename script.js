@@ -87,14 +87,14 @@ async function generateAIResponse() {
       formData.append("file", selectedFile);
     }
 
-    const response = await fetch("https://https://studyspark-ai-with-azure.onrender.com./ask", {
+    const response = await fetch("https://studyspark-ai-with-azure.onrender.com./ask", {
       method: "POST",
       body: formData
     });
     const contentType = response.headers.get("content-type") || "";
 
 if (!contentType.includes("application/json")) {
-  const text = await response.text
+  const text = await response.text();
   throw new Error("Server JSON ke badle HTML de raha hai");
 }
 
